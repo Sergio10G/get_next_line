@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: sdiez-ga <sdiez-ga@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/01/21 18:11:20 by sdiez-ga          #+#    #+#             */
-/*   Updated: 2022/01/21 19:28:58 by sdiez-ga         ###   ########.fr       */
+/*   Created: 2022/01/24 17:09:58 by sdiez-ga          #+#    #+#             */
+/*   Updated: 2022/01/24 20:17:41 by sdiez-ga         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,12 @@ char	*get_next_line(int fd)
 {
 	static char	*saved;
 
-	if (saved)
+	if (fd < 0 || BUFFER_SIZE < 1)
+		return (0);
+	if (saved != 0)
 	{
-	 	if (ft_strchr(saved, '\n') != 0)
-			return (out_and_save(&saved));
+		if (ft_strchr(saved, '\n') != 0)
+			return (save_and_out(&saved));
 	}
 	return (read_till_has_nl(fd, &saved));
 }
@@ -27,44 +29,47 @@ char	*get_next_line(int fd)
 char	*read_till_has_nl(int fd, char **saved)
 {
 	char	*temp;
-	int		found_nl;
 	int		read_chars;
 
-	found_nl = 0;
-	while (!found_nl)
+	read_chars = -1;
+	temp = malloc((BUFFER_SIZE + 1) * sizeof(char));
+	if (!temp)
+		return (0);
+	while (read_chars != 0)
 	{
-		temp = malloc((BUFFER_SIZE + 1) * sizeof(char));
-		temp[BUFFER_SIZE] = '\0';
 		read_chars = read(fd, temp, BUFFER_SIZE);
-		if (read_chars == 0)
+		if (read_chars < 1)
 			break ;
-		if ((*saved))
+		if (*saved)
 			*saved = ft_strjoin(*saved, temp);
 		else
-			*saved = ft_strdup(temp);
-		free(temp);
-		if (ft_strchr(*saved, '\n'))
-			found_nl = 1;
+			*saved = ft_substr(temp, 0, ft_strlen(temp));
 	}
-	if (found_nl)
-		return (out_and_save(saved));
+	free(temp);
+	if (!saved || !*saved)
+		return (0);
+	if (ft_strchr(*saved, '\n') != 0)
+		return (save_and_out(saved));
 	return (out_no_nl(saved));
 }
 
-char	*out_and_save(char **saved)
+char	*save_and_out(char **saved)
 {
+	char	*temp;
 	char	*out;
-	char	*save_temp;
-	int		i;
+	int		nl_index;
 
-	i = 0;
-	while ((*saved)[i] != '\n')
-		i++;
-	out = malloc((i + 2) * sizeof(char));
-	ft_memcpy(out, (*saved), i + 1);
-	save_temp = ft_strdup((*saved) + i + 1);
-	free(*saved);
-	*saved = save_temp;
+	nl_index = 0;
+	while ((*saved)[nl_index] && (*saved)[nl_index] != '\n')
+		nl_index++;
+	out = ft_substr(*saved, 0, nl_index + 1);
+	temp = ft_substr(*saved, nl_index + 1, ft_strlen(*saved));
+	if (!out || !temp)
+		return (0);
+	if (*saved)
+		free(*saved);
+	*saved = ft_substr(temp, 0, ft_strlen(temp));
+	free(temp);
 	return (out);
 }
 
@@ -72,7 +77,8 @@ char	*out_no_nl(char **saved)
 {
 	char	*out;
 
-	out = ft_strdup(*saved);
+	out = ft_substr(*saved, 0, ft_strlen(*saved));
 	free(*saved);
+	*saved = 0;
 	return (out);
 }

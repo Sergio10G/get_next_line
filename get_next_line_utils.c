@@ -6,7 +6,7 @@
 /*   By: sdiez-ga <sdiez-ga@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 16:03:53 by sdiez-ga          #+#    #+#             */
-/*   Updated: 2022/01/21 17:41:38 by sdiez-ga         ###   ########.fr       */
+/*   Updated: 2022/01/24 19:30:55 by sdiez-ga         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,20 +37,25 @@ void	*ft_memcpy(void *dst, const void *src, size_t n)
 	return (dst);
 }
 
-char	*ft_strdup(const char *s1)
+char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
-	char	*dup;
-	size_t	len;
+	char	*sub;
 
-	len = ft_strlen(s1) + 1;
-	dup = malloc(len);
-	if (!dup)
+	if (!s)
 		return (0);
-	ft_memcpy(dup, s1, len);
-	return (dup);
+	if (start >= ft_strlen(s))
+		len = 0;
+	else if (ft_strlen(s + start) < len)
+		len = ft_strlen(s + start);
+	sub = malloc(len + 1);
+	if (!sub)
+		return (0);
+	sub = ft_memcpy(sub, s + start, len);
+	sub[len] = '\0';
+	return (sub);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoin(char *s1, char const *s2)
 {
 	size_t	s1_len;
 	size_t	s2_len;
@@ -66,6 +71,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	ft_memcpy(result, s1, s1_len);
 	ft_memcpy(result + s1_len, s2, s2_len);
 	result[s1_len + s2_len] = '\0';
+	free(s1);
 	return (result);
 }
 
