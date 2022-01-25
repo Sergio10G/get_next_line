@@ -46,8 +46,8 @@ char	*read_till_has_nl(int fd, char **saved)
 		if (*saved)
 			*saved = ft_strjoin(*saved, temp);
 		else
-			*saved = ft_substr(temp, 0, ft_strlen(temp));
-        if(ft_strchr(*saved, '\n') != 0)
+			*saved = ft_substr(temp, 0, read_chars);
+        if (ft_strchr(*saved, '\n') != 0)
             break ;
 	}
 	free(temp);
