@@ -6,7 +6,7 @@
 /*   By: sdiez-ga <sdiez-ga@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/24 17:09:58 by sdiez-ga          #+#    #+#             */
-/*   Updated: 2022/01/24 20:17:41 by sdiez-ga         ###   ########.fr       */
+/*   Updated: 2022/01/25 17:31:56 by sdiez-ga         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,8 @@ char	*get_next_line(int fd)
 
 	if (fd < 0 || BUFFER_SIZE < 1)
 		return (0);
-	if (saved != 0)
-	{
-		if (ft_strchr(saved, '\n') != 0)
-			return (save_and_out(&saved));
-	}
+	if (saved != 0 && ft_strchr(saved, '\n') != 0)
+		return (save_and_out(&saved));
 	return (read_till_has_nl(fd, &saved));
 }
 
@@ -30,30 +27,39 @@ char	*read_till_has_nl(int fd, char **saved)
 {
 	char	*temp;
 	int		read_chars;
-    int     found_nl;
+	int		found_nl;
 
-    found_nl = 0;
-	read_chars = -1;
+	found_nl = 0;
+	read_chars = 1;
 	temp = malloc((BUFFER_SIZE + 1) * sizeof(char));
 	if (!temp)
 		return (0);
 	while (!found_nl)
 	{
 		read_chars = read(fd, temp, BUFFER_SIZE);
-        temp[read_chars] = '\0';
+		temp[read_chars] = '\0';
 		if (read_chars < 1)
 			break ;
 		if (*saved)
 			*saved = ft_strjoin(*saved, temp);
 		else
 			*saved = ft_substr(temp, 0, read_chars);
-        if (ft_strchr(*saved, '\n') != 0)
-            found_nl = 1;
+		if (ft_strchr(*saved, '\n') != 0)
+			found_nl = 1;
 	}
 	free(temp);
+	return (read_out(saved));
+}
+
+char	*read_out(char **saved)
+{
 	if (!*saved || (*saved)[0] == '\0')
+	{
+		free(*saved);
+		*saved = 0;
 		return (0);
-	if (found_nl)
+	}
+	if (ft_strchr(*saved, '\n') != 0)
 		return (save_and_out(saved));
 	return (out_no_nl(saved));
 }
