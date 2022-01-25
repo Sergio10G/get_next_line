@@ -30,23 +30,28 @@ char	*read_till_has_nl(int fd, char **saved)
 {
 	char	*temp;
 	int		read_chars;
+    int     found_nl;
 
+    found_nl = 0;
 	read_chars = -1;
 	temp = malloc((BUFFER_SIZE + 1) * sizeof(char));
 	if (!temp)
 		return (0);
-	while (read_chars != 0)
+	while (!found_nl)
 	{
 		read_chars = read(fd, temp, BUFFER_SIZE);
+        temp[read_chars] = '\0';
 		if (read_chars < 1)
 			break ;
 		if (*saved)
 			*saved = ft_strjoin(*saved, temp);
 		else
 			*saved = ft_substr(temp, 0, ft_strlen(temp));
+        if(ft_strchr(*saved, '\n') != 0)
+            break ;
 	}
 	free(temp);
-	if (!saved || !*saved)
+	if (!*saved || (*saved)[0] == '\0')
 		return (0);
 	if (ft_strchr(*saved, '\n') != 0)
 		return (save_and_out(saved));
@@ -66,8 +71,7 @@ char	*save_and_out(char **saved)
 	temp = ft_substr(*saved, nl_index + 1, ft_strlen(*saved));
 	if (!out || !temp)
 		return (0);
-	if (*saved)
-		free(*saved);
+	free(*saved);
 	*saved = ft_substr(temp, 0, ft_strlen(temp));
 	free(temp);
 	return (out);
