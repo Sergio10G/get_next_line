@@ -48,12 +48,12 @@ char	*read_till_has_nl(int fd, char **saved)
 		else
 			*saved = ft_substr(temp, 0, read_chars);
         if (ft_strchr(*saved, '\n') != 0)
-            break ;
+            found_nl = 1;
 	}
 	free(temp);
 	if (!*saved || (*saved)[0] == '\0')
 		return (0);
-	if (ft_strchr(*saved, '\n') != 0)
+	if (found_nl)
 		return (save_and_out(saved));
 	return (out_no_nl(saved));
 }
