@@ -1,26 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sdiez-ga <sdiez-ga@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/01/24 17:09:58 by sdiez-ga          #+#    #+#             */
-/*   Updated: 2022/01/27 18:14:31 by sdiez-ga         ###   ########.fr       */
+/*   Created: 2022/01/27 17:20:57 by sdiez-ga          #+#    #+#             */
+/*   Updated: 2022/01/27 18:15:24 by sdiez-ga         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./get_next_line.h"
+#include "./get_next_line_bonus.h"
 
 char	*get_next_line(int fd)
 {
-	static char	*saved;
+	static char	*saved[MAX_FDS];
 
-	if (fd < 0 || BUFFER_SIZE < 1)
+	if (fd < 0 || fd > MAX_FDS || BUFFER_SIZE < 1)
 		return (0);
-	if (saved != 0 && ft_strchr(saved, '\n') != 0)
-		return (save_and_out(&saved));
-	return (read_till_has_nl(fd, &saved));
+	if (saved[fd] != 0 && ft_strchr(saved[fd], '\n') != 0)
+		return (save_and_out(saved + fd));
+	return (read_till_has_nl(fd, saved));
 }
 
 char	*read_till_has_nl(int fd, char **saved)
@@ -40,15 +40,15 @@ char	*read_till_has_nl(int fd, char **saved)
 		temp[read_chars] = '\0';
 		if (read_chars < 1)
 			break ;
-		if (*saved)
-			*saved = ft_strjoin(*saved, temp);
+		if (saved[fd])
+			saved[fd] = ft_strjoin(saved[fd], temp);
 		else
-			*saved = ft_substr(temp, 0, read_chars);
-		if (ft_strchr(*saved, '\n') != 0)
+			saved[fd] = ft_substr(temp, 0, read_chars);
+		if (ft_strchr(saved[fd], '\n') != 0)
 			break ;
 	}
 	free(temp);
-	return (read_out(saved));
+	return (read_out(saved + fd));
 }
 
 char	*read_out(char **saved)

@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sdiez-ga <sdiez-ga@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/01/21 16:03:53 by sdiez-ga          #+#    #+#             */
-/*   Updated: 2022/01/27 17:21:24 by sdiez-ga         ###   ########.fr       */
+/*   Created: 2022/01/27 17:20:44 by sdiez-ga          #+#    #+#             */
+/*   Updated: 2022/01/27 17:20:47 by sdiez-ga         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./get_next_line.h"
+#include "./get_next_line_bonus.h"
 
 size_t	ft_strlen(const char *s)
 {
